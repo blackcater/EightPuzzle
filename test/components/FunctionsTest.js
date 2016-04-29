@@ -1,6 +1,6 @@
-import Eight from 'components/Eight';
+import Eight from 'functions/Eight';
 
-describe("Functions", ()=>{
+describe("Basic Functions", ()=>{
   it("should have shuffle function", ()=>{
     let arr = [1, 2, 3, 4, 5];
     Eight.shuffleArr(arr).should.not.equal(arr);

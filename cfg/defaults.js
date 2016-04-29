@@ -12,23 +12,23 @@ function getDefaultModules() {
     loaders: [
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader!postcss-loader'
+        loader: 'style-loader!css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss-loader'
       },
       {
         test: /\.sass/,
-        loader: 'style-loader!css-loader!postcss-loader!sass-loader?outputStyle=expanded&indentedSyntax'
+        loader: 'style-loader!css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss-loader!sass-loader?outputStyle=expanded&indentedSyntax'
       },
       {
         test: /\.scss/,
-        loader: 'style-loader!css-loader!postcss-loader!sass-loader?outputStyle=expanded'
+        loader: 'style-loader!css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss-loader!sass-loader?outputStyle=expanded'
       },
       {
         test: /\.less/,
-        loader: 'style-loader!css-loader!postcss-loader!less-loader'
+        loader: 'style-loader!css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss-loader!less-loader'
       },
       {
         test: /\.styl/,
-        loader: 'style-loader!css-loader!postcss-loader!stylus-loader'
+        loader: 'style-loader!css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss-loader!stylus-loader'
       },
       {
         test: /\.(png|jpg|gif|woff|woff2)$/,
@@ -37,6 +37,10 @@ function getDefaultModules() {
       {
         test: /\.(mp4|ogg|svg)$/,
         loader: 'file-loader'
+      },
+      {
+        test: /\.json$/,
+        loader: "json-loader"
       }
     ]
   };

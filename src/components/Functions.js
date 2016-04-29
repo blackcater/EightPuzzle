@@ -1,5 +1,6 @@
-// 八数码值
-let EIGHT_NUMBER = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+/**
+ * 基础函数
+ */
 
 /**
  * 打乱数组
@@ -44,11 +45,36 @@ function getInversionNumber(arr, bol){
   if (!bol) {
     return num;
   } else {
-    return (4%2 === 0);
+    return (num%2 === 0);
   }
+}
+
+/**
+ * 将数组转化为数据对象
+ * @param arr
+ * @returns {object}
+ */
+function transformArrToData(arr) {
+  var obj = {};
+  for (let i=0; i<arr.length; i++) {
+    obj[arr[i]] = i+'';
+  }
+  return obj;
+}
+
+/**
+ *
+ */
+function cloneArr(arr){
+  let nArr = [];
+  return nArr.concat(arr);
 }
 
 export default {
   shuffleArr: shuffleArr,
-  getInversionNumber: getInversionNumber
-}
+  getInversionNumber: getInversionNumber,
+  transformArrToData: transformArrToData,
+  cloneArr: cloneArr
+};
+
+export {shuffleArr, getInversionNumber, transformArrToData, cloneArr};
