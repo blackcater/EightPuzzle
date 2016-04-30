@@ -34,3 +34,6 @@ bower_components/
 
 # build
 dist
+
+# test file
+num.js
