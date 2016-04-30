@@ -1,4 +1,4 @@
-import Eight from 'functions/Eight';
+import Eight from 'components/Functions';
 
 describe("Basic Functions", ()=>{
   it("should have shuffle function", ()=>{
@@ -12,5 +12,9 @@ describe("Basic Functions", ()=>{
     Eight.getInversionNumber(arr2).should.equal(5);
     Eight.getInversionNumber(arr1, true).should.equal(true);
     Eight.getInversionNumber(arr2, true).should.equal(false);
+  });
+  it("should have getFxOfState function", ()=>{
+    let eState = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+    let nState = [1, 3, 2, 4, 5, 6, 0, 7, 8];
   });
 });

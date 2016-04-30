@@ -218,7 +218,8 @@ export default {
   getInversionNumber: getInversionNumber,
   transformArrToData: transformArrToData,
   cloneArr: cloneArr,
-  getExchangeProcess: getExchangeProcess
+  getExchangeProcess: getExchangeProcess,
+  getFxOfState: getFxOfState
 };
 
-export {shuffleArr, getInversionNumber, transformArrToData, cloneArr, getExchangeProcess};
+export {shuffleArr, getInversionNumber, transformArrToData, cloneArr, getExchangeProcess, getFxOfState};
