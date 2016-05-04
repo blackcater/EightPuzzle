@@ -5,62 +5,58 @@ import React, { Component } from 'react';
 
 import styles from './EightPuzzleStateComp.css'
 import STATE from '../../stores/position.json';
-import {transformArrToData} from '../Functions';
 
 export default class EightPuzzleStateComp extends Component {
-  static zIndex = 100; // 层级初始指
-  static timer = null; // 计时器
   static propTypes = {
     stat: React.PropTypes.array.isRequired,
-    data: React.PropTypes.object,
-    tiktok: React.PropTypes.array
+    tiktok: React.PropTypes.array,
+    stateChangeHandler: React.PropTypes.func
   };
   state = {
-    data: transformArrToData(this.props.stat),
+    data: this.props.stat,
     index: 0 // 当前进行到第几步
   };
-  componentWillMount(){
-    if (this.props.tiktok && this.props.tiktok.length !== 0) {
-      clearInterval(this.timer);
-      this.timer = setInterval(this.exchangeHandler.bind(this), 1000);
+  timer = null; // 设置定时器
+  componentDidMount(){
+    if (this.props.tiktok) {
+      this.timer = setInterval(function(){
+        let cState = this.state.data; // 当前状态
+        let index = this.state.index;
+
+        if (this.props.tiktok.length == (index+1)) {
+          clearInterval(this.timer);
+        }
+
+        let val = this.props.tiktok[index]; // 要与哪个值交换
+        let ind = cState.indexOf(0); // 0所在的位置
+        let vInd = cState.indexOf(val); // val所在位置
+        let tmp = cState[ind];
+        cState[ind] = cState[vInd];
+        cState[vInd] = tmp;
+        ++index;
+        this.setState({
+          data: cState,
+          index: index
+        });
+      }.bind(this), 1000);
     }
   }
   componentWillUnmount(){
     clearInterval(this.timer);
   }
-  exchangeHandler(){
-    // 加入数字变化 倒计时 TODO
-
-    // 变化位置
-    var tiktok = this.props.tiktok;
-    var data = this.state.data;
-    var index = this.state.index;
-    var ind = tiktok[index];
-    var tmp = data[ind];
-    if (index > (tiktok.length - 1)) {
-       return;
-    }
-    data[ind] = data[0];
-    data[0] = tmp;
-    index++;
-    this.setState({
-      data: data,
-      index: index
-    });
-  }
   render() {
-    var data = this.state.data;
+    let data = this.state.data;
     return (
       <ul className={styles.box}>
-        <li style={STATE[data[this.props.stat[0]]]} className={styles.minBox} ref={this.props.stat[0]} key="0">{this.props.stat[0]}</li>
-        <li style={STATE[data[this.props.stat[1]]]} className={styles.minBox} ref={this.props.stat[1]} key="1">{this.props.stat[1]}</li>
-        <li style={STATE[data[this.props.stat[2]]]} className={styles.minBox} ref={this.props.stat[2]} key="2">{this.props.stat[2]}</li>
-        <li style={STATE[data[this.props.stat[3]]]} className={styles.minBox} ref={this.props.stat[3]} key="3">{this.props.stat[3]}</li>
-        <li style={STATE[data[this.props.stat[4]]]} className={styles.minBox} ref={this.props.stat[4]} key="4">{this.props.stat[4]}</li>
-        <li style={STATE[data[this.props.stat[5]]]} className={styles.minBox} ref={this.props.stat[5]} key="5">{this.props.stat[5]}</li>
-        <li style={STATE[data[this.props.stat[6]]]} className={styles.minBox} ref={this.props.stat[6]} key="6">{this.props.stat[6]}</li>
-        <li style={STATE[data[this.props.stat[7]]]} className={styles.minBox} ref={this.props.stat[7]} key="7">{this.props.stat[7]}</li>
-        <li style={STATE[data[this.props.stat[8]]]} className={styles.minBox} ref={this.props.stat[8]} key="8">{this.props.stat[8]}</li>
+        <li style={STATE[data.indexOf(1)]} className={styles.minBox} ref="1" key="1">1</li>
+        <li style={STATE[data.indexOf(2)]} className={styles.minBox} ref="2" key="2">2</li>
+        <li style={STATE[data.indexOf(3)]} className={styles.minBox} ref="3" key="3">3</li>
+        <li style={STATE[data.indexOf(4)]} className={styles.minBox} ref="4" key="4">4</li>
+        <li style={STATE[data.indexOf(5)]} className={styles.minBox} ref="5" key="5">5</li>
+        <li style={STATE[data.indexOf(6)]} className={styles.minBox} ref="6" key="6">6</li>
+        <li style={STATE[data.indexOf(7)]} className={styles.minBox} ref="7" key="7">7</li>
+        <li style={STATE[data.indexOf(8)]} className={styles.minBox} ref="8" key="8">8</li>
+        <li style={STATE[data.indexOf(0)]} className={styles.zeroMinBox} ref="8" key="0">0</li>
       </ul>
     )
   }

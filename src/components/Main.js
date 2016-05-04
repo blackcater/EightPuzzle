@@ -4,32 +4,64 @@ require('styles/App.css');
 import React from 'react';
 import InitialStageComp from './InitialStageComp/InitialStageComp';
 import AnimateStageComp from './AnimateStageComp/AnimateStageComp';
+import EightPuzzleStateComp from './EightPuzzleStateComp/EightPuzzleStateComp';
 
-import {shuffleArr, getInversionNumber, getExchangeProcess} from './Functions';
+import {shuffleArr, getInversionNumber} from './Functions';
+import jsonp from 'jsonp';
 
 import styles from './Main.css';
 
-let EightPuzzle = [0, 1, 2, 3, 4, 5, 6, 7, 8]; // 0表示空白方格
-let arr1 = shuffleArr(EightPuzzle);
-let arr2 = shuffleArr(EightPuzzle);
-// 如果他们的逆序数不相等, 在打乱,直到相等
-while (getInversionNumber(arr1, true) !== getInversionNumber(arr2, true)) {
-  arr2 = shuffleArr(EightPuzzle);
+
+let Eight_Number = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+let sState = shuffleArr(Eight_Number);
+let eState = shuffleArr(Eight_Number);
+
+while (getInversionNumber(sState, true) !== getInversionNumber(eState, true)) {
+  eState = shuffleArr(eState);
 }
 
-let tiktok = getExchangeProcess(arr1, arr2);
 
 class AppComponent extends React.Component {
+  state = {
+    ele: <InitialStageComp sState={sState} eState={eState} />,
+    bottom: <input type="button" value="Start" className={styles.startBtn} onClick={this.clickHandler.bind(this)}/>
+  };
   clickHandler(){
-    this.refs.container.children = <AnimateStageComp tiktok={tiktok} startArr={arr1} endArr={arr2} />;
+    // 请求
+    let sStr = encodeURIComponent(sState.join(','));
+    let eStr = encodeURIComponent(eState.join(','));
+    let that = this;
+
+    jsonp('http://localhost:3000/eightpuzzle?sState='+sStr+'&eState='+eStr, {
+      timeout: 200000,
+      name: 'jsonp'
+    }, function(err, data){
+      let result = eval(data);
+      this.setState({
+        ele: <AnimateStageComp tiktok={result.tiktok} states={result.states} sState={sState} eState={eState}/>,
+        bottom: <div className={styles.stateText}>
+          <EightPuzzleStateComp stat={sState} />
+          <EightPuzzleStateComp stat={eState} />
+        </div>
+      });
+    }.bind(that));
+
+
+    function jsonpeightpuzzle(data){
+      return data
+    }
   }
   render() {
     return (
       <div className={styles.stage}>
         <div className={styles.container} ref="container">
-          <InitialStageComp startArr={arr1} endArr={arr2} clickHandler={this.clickHandler.bind(this)}/>
+          {
+            this.state.ele
+          }
         </div>
-        <input type="button" value="Start" className={styles.startBtn}/>
+        {
+          this.state.bottom
+        }
       </div>
     );
   }

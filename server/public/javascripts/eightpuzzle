@@ -1,0 +1,313 @@
+/**
+ * 启动八数码程序, 采用的是启发式算法
+ * @param sState 开始状态
+ * @param eState 结束状态
+ */
+var DIRECTION = {
+  "0": {
+    "bottom": 3,
+    "right": 1
+  },
+  "1": {
+    "bottom": 4,
+    "left": 0,
+    "right": 2
+  },
+  "2": {
+    "bottom": 5,
+    "left": 1
+  },
+  "3": {
+    "top": 0,
+    "bottom": 6,
+    "right": 4
+  },
+  "4": {
+    "top": 1,
+    "bottom": 7,
+    "left": 3,
+    "right": 5
+  },
+  "5": {
+    "top": 2,
+    "bottom": 8,
+    "left": 4
+  },
+  "6": {
+    "top": 3,
+    "right": 7
+  },
+  "7": {
+    "top": 4,
+    "left": 6,
+    "right": 8
+  },
+  "8": {
+    "top": 5,
+    "left": 7
+  }
+};
+
+/**
+ * 数组拷贝
+ *
+ * @param arr
+ * @returns {Array.<int>} 返回新的数组
+ */
+function cloneArr(arr){
+  let nArr = [];
+  return nArr.concat(arr);
+}
+
+/**
+ *
+ * @param sState
+ * @param eState
+ * @returns {{tiktok, states}}
+ */
+function startEightPuzzle(sState, eState){
+
+  return Node.printTrace(Node.getExchangeProcess(new Node(sState, null), new Node(eState, null), 1, 1));
+
+  /* return { tiktok: [ 3, 7, 1, 5, 2, 6, 8, 3, 7, 1, 5, 2, 6, 8, 1, 5, 2, 6, 5, 7, 4 ],
+   states:
+   [ [ 1, 7, 4, 5, 3, 0, 2, 6, 8 ],
+   [ 1, 7, 4, 5, 0, 3, 2, 6, 8 ],
+   [ 1, 0, 4, 5, 7, 3, 2, 6, 8 ],
+   [ 0, 1, 4, 5, 7, 3, 2, 6, 8 ],
+   [ 5, 1, 4, 0, 7, 3, 2, 6, 8 ],
+   [ 5, 1, 4, 2, 7, 3, 0, 6, 8 ],
+   [ 5, 1, 4, 2, 7, 3, 6, 0, 8 ],
+   [ 5, 1, 4, 2, 7, 3, 6, 8, 0 ],
+   [ 5, 1, 4, 2, 7, 0, 6, 8, 3 ],
+   [ 5, 1, 4, 2, 0, 7, 6, 8, 3 ],
+   [ 5, 0, 4, 2, 1, 7, 6, 8, 3 ],
+   [ 0, 5, 4, 2, 1, 7, 6, 8, 3 ],
+   [ 2, 5, 4, 0, 1, 7, 6, 8, 3 ],
+   [ 2, 5, 4, 6, 1, 7, 0, 8, 3 ],
+   [ 2, 5, 4, 6, 1, 7, 8, 0, 3 ],
+   [ 2, 5, 4, 6, 0, 7, 8, 1, 3 ],
+   [ 2, 0, 4, 6, 5, 7, 8, 1, 3 ],
+   [ 0, 2, 4, 6, 5, 7, 8, 1, 3 ],
+   [ 6, 2, 4, 0, 5, 7, 8, 1, 3 ],
+   [ 6, 2, 4, 5, 0, 7, 8, 1, 3 ],
+   [ 6, 2, 4, 5, 7, 0, 8, 1, 3 ],
+   [ 6, 2, 0, 5, 7, 4, 8, 1, 3 ] ] }*/
+}
+
+/*               Node Class 及方法定义                 */
+/**
+ * Node节点
+ *
+ * @param state 节点状态, 指当前节点的
+ * @param parent 父节点
+ * @param deep 节点深度
+ * @param fx 节点当前的估值
+ * @constructor
+ */
+function Node(state, parent, deep, fx){
+  this.state = state;
+  this.parent = parent?parent:null;
+  this.deep = (deep>=0)?deep:-1;
+  this.fx = (fx>=0)?fx:Infinity;
+  this.index = state.indexOf(0);
+}
+
+
+
+/**
+ *  判断两个节点是否相等
+ * @param oNode
+ * @returns {boolean}
+ */
+Node.prototype.same = function(oNode) {
+  return (oNode.state.join(', ') === this.state.join(', '));
+};
+
+/**
+ *  交换位置,返回子节点
+ *
+ * @param ind
+ * @param eNode
+ * @param a
+ * @param b
+ * @return {Node}
+ */
+Node.prototype.getExchangeNode = function(ind, eNode, a, b){
+  let newState = cloneArr(this.state);
+  let temp = newState[this.index];
+  let deep = this.deep;
+  newState[this.index] = newState[ind];
+  newState[ind] = temp;
+  let tNode = new Node(newState, this, ++deep);
+  tNode.getFxOfState(eNode, a, b);
+  return tNode;
+};
+
+
+/**
+ *  计算f(x) = a*g(x)+b*h(x)
+ *         a:       是g(x)的系数 默认为1
+ *         g(x):    是指当前的深度, deep
+ *         b:       是h(x)的系数 默认为1
+ *         h(x):    是指当前的位置不对应得个数
+ *
+ * @param eNode 结束节点
+ * @param a
+ * @param b
+ */
+Node.prototype.getFxOfState = function (eNode, a, b){
+  let gx = this.deep;
+  let hx = 0;
+  for (let i=0; i<this.state.length; i++) {
+    if (this.state[i] !== eNode.state[i]) {
+      hx++;
+    }
+  }
+  this.fx = a*gx+b*hx;
+  return this.fx;
+};
+
+/**
+ * 八数码核心算法部分, 采用启发式的算法, 返回其间交换的过程
+ * 启发式算法的核心是公式: f(x) = a*g(x)+b*h(x)
+ *        f(x) : 为表达式的结果, 越大越好
+ *        g(x) : 深度
+ *        h(x) : 当前状态与结果状态对应位置不相等的个数
+ *        a    : g(x)的系数 为正数
+ *        b    : h(x)的系数 为正数
+ *
+ * @param sNode 开始的状态
+ * @param eNode 结束的状态
+ * @param a int 1
+ * @param b int 1
+ * @returns {Node} 返回交换过程
+ */
+Node.getExchangeProcess = function (sNode, eNode, a=1, b=1) {
+
+  console.log(sNode);
+  console.log(eNode);
+  let openStack = [];
+  let closeStack = [];
+  let cNode = new Node(sNode.state, null, 0);
+  // 初始化当前节点
+  cNode.getFxOfState(eNode, a, b);
+  closeStack.push(cNode);
+
+  while (!(cNode.same(eNode))) {
+    // 计算当前node可能的取值
+    let mayNodes = [];
+    let directs = DIRECTION[cNode.index];
+    let isFind = false;
+
+    for (let direct in directs) {
+      mayNodes.push(cNode.getExchangeNode(directs[direct], eNode, a, b));
+    }
+
+    // 检查所有的节点
+    for (let i=0; i<mayNodes.length; i++) {
+
+      // 子节点就是结果
+      if (mayNodes[i].same(eNode)){
+        cNode = mayNodes[i];
+        isFind = true;
+        break;
+      }
+
+      let inOpen = false;
+      let inClose = false;
+
+      // 是否在openStack中 fx更小 就退出, 如果fx更大,就不用管
+      for (let j=0; j<openStack.length; j++) {
+        if (mayNodes[i].same(openStack[j])) {
+          if(mayNodes[i].fx < openStack[j].fx) {
+            openStack[j] = mayNodes[i];
+            inOpen = true;
+            break;
+          } else {
+            inOpen = true;
+            break;
+          }
+        }
+      }
+
+      // 在openStack中找到了就不用再closeStack中寻找
+      if (!inOpen) {
+        // 是否在closeStack中 如果效过更好,加回到openStack中.
+        for (let k=0; k<closeStack.length; k++) {
+          if (mayNodes[i].same(closeStack[k])) {
+            if(mayNodes[i].fx < closeStack[k].fx) {
+              // 移出closeStack
+              closeStack.splice(k, 1);
+              k--;
+              // 放回openStack
+              openStack.push(mayNodes[i]);
+              inClose = true;
+              break;
+            } else {
+              inClose = true;
+              break;
+            }
+          }
+        }
+      }
+
+      // 找到相同节点,就退出当前循环,进行下一个node寻找
+      if (inOpen || inClose) continue;
+
+      // 都没找到就加入openStack中
+      if (!inOpen && !inClose) {
+        openStack.push(mayNodes[i]);
+      }
+    }
+
+    if (isFind) {
+      return cNode;
+    }
+
+    // 取出fx值最小的几点
+    let minFx = Infinity;
+    let minInd = null;
+    for (let i=0; i<openStack.length; i++) {
+      if (openStack[i].fx < minFx) {
+        minInd = i;
+        minFx = openStack[i].fx;
+      }
+    }
+
+    // openStack中拿到fx最小的节点,将其加入closeStack中, 进行下一次循环
+    cNode = openStack.splice(minInd, 1);
+    cNode = cNode[0];
+
+    closeStack.push(cNode);
+  }
+
+  return cNode;
+};
+
+Node.printTrace = function(eNode){
+  let trace = [];
+  let tiktok = [];
+  let states = [];
+  while(eNode.parent !== null) {
+    trace.unshift(eNode);
+    eNode = eNode.parent;
+  }
+  trace.unshift(eNode);
+  states.push(eNode.state);
+  for (let i=1; i<trace.length; i++) {
+    let pNode = trace[i-1];
+    let cNode = trace[i];
+    let cInd = trace[i].index;
+    tiktok.push(pNode.state[cInd]);
+    states.push(cNode.state);
+  }
+  return {
+    tiktok: tiktok,
+    states: states
+  };
+};
+
+module.exports = {
+  startEightPuzzle: startEightPuzzle
+};

@@ -10,9 +10,9 @@ export default class InitialStageComp extends Component {
   render(){
     return (
       <div className={styles.initialState}>
-        <EightPuzzleStateComp stat={this.props.startArr} />
-        <span className={styles.tranformBtn} onClick={this.props.clickHandler}> 结束状态> </span>
-        <EightPuzzleStateComp stat={this.props.endArr} />
+        <EightPuzzleStateComp stat={this.props.sState} />
+        <span className={styles.tranformBtn}> 结束状态> </span>
+        <EightPuzzleStateComp stat={this.props.eState} />
       </div>
     )
   }
