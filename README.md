@@ -22,9 +22,13 @@ Javascript
 
 > cd ./EightPuzzle-master
 
+> npm install # 安装npm依赖
+
 > npm run serve # 启动react客户端
 
 > cd ./server # 在另一个命令行中
+
+> npm install # 安装express之类的依赖
 
 > npm start # 启动express服务器
 ```
